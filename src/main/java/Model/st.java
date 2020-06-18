@@ -1,6 +1,6 @@
 package Model;
 
-public class station {
+public class st {
     String name;
 
     public String getName() {
@@ -11,10 +11,10 @@ public class station {
         this.name = name;
     }
 
-    public station() {
+    public st() {
     }
 
-    public station(String name) {
+    public st(String name) {
         this.name = name;
     }
 }
