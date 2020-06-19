@@ -1,20 +1,15 @@
 package com.bart.Bart;
 
-import Model.Response;
 import Model.Station;
-import Model.StationResponse;
-import Model.Stations;
-import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
+import com.bart.Bart.Response.StationResponse;
+import Model.StationsParent;
 import net.minidev.json.parser.ParseException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @org.springframework.web.bind.annotation.RestController
 public class RestController {
@@ -23,7 +18,7 @@ public class RestController {
     @GetMapping("/stations")
     public StationResponse getAllStations() throws ParseException {
         RestTemplate restTemplate=new RestTemplate();
-        Response s=restTemplate.getForObject("http://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&json=y", Response.class);
+        StationsParent s=restTemplate.getForObject("http://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&json=y", StationsParent.class);
         List<Station> stations= getAllStationDetail(s);
         StationResponse stationResponse = getOnlyNames(stations);
         return  stationResponse;
@@ -38,7 +33,7 @@ public class RestController {
     return new StationResponse(names);
     }
 
-    public List<Station> getAllStationDetail(Response response)
+    public List<Station> getAllStationDetail(StationsParent response)
     {
         return response.getRoot().getStations().getStation();
     }

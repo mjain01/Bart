@@ -1,4 +1,4 @@
-package Model;
+package com.bart.Bart.Response;
 
 import java.util.List;
 
