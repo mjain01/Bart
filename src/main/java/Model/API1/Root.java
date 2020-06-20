@@ -1,9 +1,6 @@
-package Model;
+package Model.API1;
 
 import com.fasterxml.jackson.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Root {
