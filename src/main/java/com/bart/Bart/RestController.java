@@ -15,14 +15,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @org.springframework.web.bind.annotation.RestController
 public class RestController {
-
+    Map<String,String> abbr=new HashMap<>();
     @ResponseBody
     @GetMapping("/stations")
     public StationResponse getAllStations() throws ParseException {
@@ -30,15 +27,26 @@ public class RestController {
         StationsParent s=restTemplate.getForObject("http://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&json=y", StationsParent.class);
         List<Station> stations= getAllStationDetail(s);
         StationResponse stationResponse = getOnlyNames(stations);
+        putInMap(stations);
         return  stationResponse;
 
+    }
+
+    private void putInMap(List<Station> stations) {
+        if(abbr.size()==0)
+        {
+            for(Station station : stations)
+            {
+                abbr.put(station.getName(),station.getAbbr());
+            }
+        }
     }
 
     @ResponseBody
     @GetMapping("/{source}/{destination}")
     public TrainDetailResponse getTrainDetails(@PathVariable String source, @PathVariable String destination) throws ParseException{
-        source=source.toUpperCase();
-        destination=destination.toUpperCase();
+        source=getAbbreviation(source);
+        destination=getAbbreviation(destination);
         RestTemplate restTemplate=new RestTemplate();
         String routeNo = getRouteNo(source, destination);
         TrainDetailsParent trainDetailsParent=restTemplate.getForObject("https://api.bart.gov/api/sched.aspx?cmd=routesched&route="+routeNo+"&key=MW9S-E7SL-26DU-VV8V&json=y", TrainDetailsParent.class);
@@ -96,14 +104,17 @@ public class RestController {
     @ResponseBody
     @GetMapping("/station/{source}")
     public StationInformationParent getStationInfo(@PathVariable String source) throws ParseException {
-        source = getAbbreviation(source);
         RestTemplate restTemplate=new RestTemplate();
-        StationInformationParent s=restTemplate.getForObject("https://api.bart.gov/api/stn.aspx?cmd=stninfo&orig="+source+"&key=MW9S-E7SL-26DU-VV8V&json=y", StationInformationParent.class);
+        if(abbr.size()==0)
+            getAllStations();
+        System.out.println("https://api.bart.gov/api/stn.aspx?cmd=stninfo&orig="+abbr.get(source)+"&key=MW9S-E7SL-26DU-VV8V&json=y");
+        StationInformationParent s=restTemplate.getForObject("https://api.bart.gov/api/stn.aspx?cmd=stninfo&orig="+abbr.get(source)+"&key=MW9S-E7SL-26DU-VV8V&json=y",StationInformationParent.class);
         return s;
     }
 
-    private String getAbbreviation(String source) {
-        return source;
+    private String getAbbreviation(String station) throws ParseException{
+        StationInformationParent stationInfo = getStationInfo(station);
+        return stationInfo.getRoot().getStations().getStation().getAbbr();
     }
 
     private StationResponse getOnlyNames(List<Station> stations) {

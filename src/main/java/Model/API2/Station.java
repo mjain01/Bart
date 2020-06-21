@@ -6,28 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonPropertyOrder({
-            "name",
-            "abbr",
-            "gtfs_latitude",
-            "gtfs_longitude",
-            "address",
-            "city",
-            "county",
-            "state",
-            "zipcode",
-            "north_routes",
-            "south_routes",
-            "north_platforms",
-            "south_platforms",
-            "platform_info",
-            "intro",
-            "cross_street",
-            "food",
-            "shopping",
-            "attraction",
-            "link"
-    })
+
     public class Station {
 
         @JsonProperty("name")
@@ -48,7 +27,9 @@ import java.util.Map;
         private String state;
         @JsonProperty("zipcode")
         private String zipcode;
-        @JsonProperty("north_routes")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+
+    @JsonProperty("north_routes")
         private NorthRoutes northRoutes;
         @JsonProperty("south_routes")
         private SouthRoutes southRoutes;

@@ -5,17 +5,22 @@ import com.fasterxml.jackson.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
+
 @JsonPropertyOrder({
         "route"
 })
 public class NorthRoutes {
+    public NorthRoutes(List<String> route) {
+        this.route = route;
+    }
 
+    public NorthRoutes() {
+    }
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("route")
     private List<String> route = null;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
 
     @JsonProperty("route")
     public List<String> getRoute() {
@@ -27,14 +32,5 @@ public class NorthRoutes {
         this.route = route;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
 
 }
