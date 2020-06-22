@@ -62,8 +62,10 @@ public class RestController {
     @GetMapping("/station/{source}")
     public StationInformationParent getStationInfo(@PathVariable String source) throws Exception {
         service.fillAbbrIfEmpty();
-        String json=restTemplate.getForObject("https://api.bart.gov/api/stn.aspx?cmd=stninfo&orig="+service.getAbbr(source)+"&key=MW9S-E7SL-26DU-VV8V&json=y",String.class);
+        source=service.getAbbr(source);
+        String json=restTemplate.getForObject("https://api.bart.gov/api/stn.aspx?cmd=stninfo&orig="+source+"&key=MW9S-E7SL-26DU-VV8V&json=y",String.class);
         json = service.cleaningJSON(json);
+        System.out.println(source+"="+json);
         StationInformationParent sip=mapper.readValue(json,StationInformationParent.class);
         return sip;
     }

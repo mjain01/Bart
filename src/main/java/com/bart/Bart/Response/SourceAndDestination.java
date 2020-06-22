@@ -2,6 +2,7 @@ package com.bart.Bart.Response;
 
 import Model.API3.Stop;
 
+
 public class SourceAndDestination {
     Stop source;
     Stop destination;

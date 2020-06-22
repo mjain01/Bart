@@ -106,7 +106,9 @@ public class Service {
     }
 
     public String getAbbr(String source) {
-        return abbr.get(source);
+        if(abbr.get(source)!= null)
+            return abbr.get(source);
+        return source;
     }
 
     public String cleaningJSON(String json) {

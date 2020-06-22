@@ -25,7 +25,6 @@ public class NorthRoutes {
 
     @JsonProperty("route")
     public List<String> getRoute() {
-        System.out.println("Im in route");
         return route;
     }
 
