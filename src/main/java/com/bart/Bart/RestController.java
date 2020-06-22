@@ -9,7 +9,10 @@ import com.bart.Bart.Response.SourceAndDestination;
 import com.bart.Bart.Response.StationResponse;
 import Model.API1.StationsParent;
 import com.bart.Bart.Response.TrainDetailResponse;
-import net.minidev.json.parser.ParseException;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,10 +22,10 @@ import java.util.*;
 
 @org.springframework.web.bind.annotation.RestController
 public class RestController {
-    Map<String,String> abbr=new HashMap<>();
+    Map<String,String> abbr = new HashMap();
     @ResponseBody
     @GetMapping("/stations")
-    public StationResponse getAllStations() throws ParseException {
+    public StationResponse getAllStations() throws Exception {
         RestTemplate restTemplate=new RestTemplate();
         StationsParent s=restTemplate.getForObject("http://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&json=y", StationsParent.class);
         List<Station> stations= getAllStationDetail(s);
@@ -44,7 +47,7 @@ public class RestController {
 
     @ResponseBody
     @GetMapping("/{source}/{destination}")
-    public TrainDetailResponse getTrainDetails(@PathVariable String source, @PathVariable String destination) throws ParseException{
+    public TrainDetailResponse getTrainDetails(@PathVariable String source, @PathVariable String destination) throws Exception{
         source=getAbbreviation(source);
         destination=getAbbreviation(destination);
         RestTemplate restTemplate=new RestTemplate();
@@ -74,7 +77,7 @@ public class RestController {
         trainDetailResponse.setSourceAndDestinationList(sourceAndDestinations);
         return trainDetailResponse;
     }
-    public String getRouteNo(String source, String destination) throws ParseException{
+    public String getRouteNo(String source, String destination) throws Exception{
         StationInformationParent sipSource = getStationInfo(source);
         StationInformationParent sipDest = getStationInfo(destination);
         String route = getCommonRoute(sipSource,sipDest);
@@ -103,16 +106,24 @@ public class RestController {
     }
     @ResponseBody
     @GetMapping("/station/{source}")
-    public StationInformationParent getStationInfo(@PathVariable String source) throws ParseException {
+    public StationInformationParent getStationInfo(@PathVariable String source) throws Exception {
+
         RestTemplate restTemplate=new RestTemplate();
         if(abbr.size()==0)
             getAllStations();
         System.out.println("https://api.bart.gov/api/stn.aspx?cmd=stninfo&orig="+abbr.get(source)+"&key=MW9S-E7SL-26DU-VV8V&json=y");
-        StationInformationParent s=restTemplate.getForObject("https://api.bart.gov/api/stn.aspx?cmd=stninfo&orig="+abbr.get(source)+"&key=MW9S-E7SL-26DU-VV8V&json=y",StationInformationParent.class);
-        return s;
+        String s=restTemplate.getForObject("https://api.bart.gov/api/stn.aspx?cmd=stninfo&orig="+abbr.get(source)+"&key=MW9S-E7SL-26DU-VV8V&json=y",String.class);
+        s=s.replaceAll("\"\"","null");
+
+        System.out.println("s="+s);
+        ObjectMapper mapper= new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        StationInformationParent sip=mapper.readValue(s,StationInformationParent.class);
+        return sip;
     }
 
-    private String getAbbreviation(String station) throws ParseException{
+    private String getAbbreviation(String station) throws Exception{
         StationInformationParent stationInfo = getStationInfo(station);
         return stationInfo.getRoot().getStations().getStation().getAbbr();
     }

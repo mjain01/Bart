@@ -1,12 +1,12 @@
 package Model.API2;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-
     public class Station {
 
         @JsonProperty("name")
@@ -27,9 +27,7 @@ import java.util.Map;
         private String state;
         @JsonProperty("zipcode")
         private String zipcode;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-
-    @JsonProperty("north_routes")
+        @JsonProperty("north_routes")
         private NorthRoutes northRoutes;
         @JsonProperty("south_routes")
         private SouthRoutes southRoutes;

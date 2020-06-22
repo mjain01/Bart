@@ -1,15 +1,16 @@
 package Model.API2;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-@JsonInclude(JsonInclude.Include.NON_NULL)
 
 @JsonPropertyOrder({
         "route"
 })
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class NorthRoutes {
     public NorthRoutes(List<String> route) {
         this.route = route;
@@ -24,6 +25,7 @@ public class NorthRoutes {
 
     @JsonProperty("route")
     public List<String> getRoute() {
+        System.out.println("Im in route");
         return route;
     }
 
