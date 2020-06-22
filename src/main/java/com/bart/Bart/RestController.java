@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,6 +24,9 @@ import java.util.*;
 @org.springframework.web.bind.annotation.RestController
 public class RestController {
     Map<String,String> abbr = new HashMap();
+
+    @Autowired
+    ObjectMapper mapper;
     @ResponseBody
     @GetMapping("/stations")
     public StationResponse getAllStations() throws Exception {
@@ -116,9 +120,6 @@ public class RestController {
         s=s.replaceAll("\"\"","null");
 
         System.out.println("s="+s);
-        ObjectMapper mapper= new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         StationInformationParent sip=mapper.readValue(s,StationInformationParent.class);
         return sip;
     }
